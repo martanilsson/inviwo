@@ -32,7 +32,6 @@
 #include <inviwo/core/properties/ordinalproperty.h>
 #include <modules/basegl/raycasting/raycastercomponent.h>
 
-#include <flags/flags.h>
 
 namespace inviwo {
 
@@ -47,7 +46,7 @@ public:
 
     virtual std::vector<Property*> getProperties() override;
 
-    virtual std::vector<Segment> getSegments() const override;
+    virtual std::vector<Segment> getSegments() override;
 
 private:
     FloatVec3Property shift_;

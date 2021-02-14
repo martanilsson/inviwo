@@ -46,7 +46,7 @@ public:
 
     virtual void process(Shader& shader, TextureUnitContainer&) override;
 
-    virtual std::vector<Segment> getSegments() const override;
+    virtual std::vector<Segment> getSegments() override;
 
     Timer timer;
 private:

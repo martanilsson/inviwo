@@ -30,28 +30,31 @@
 
 #include <modules/basegl/baseglmoduledefine.h>
 #include <modules/basegl/raycasting/raycastercomponent.h>
-#include <inviwo/core/properties/cameraproperty.h>
-
-#include <string_view>
-#include <functional>
-#include <optional>
+#include <inviwo/core/properties/ordinalproperty.h>
+#include <inviwo/core/properties/optionproperty.h>
+#include <inviwo/core/properties/minmaxproperty.h>
 
 namespace inviwo {
 
-class IVW_MODULE_BASEGL_API CameraComponent : public RaycasterComponent {
+class IVW_MODULE_BASEGL_API SphericalComponent : public RaycasterComponent {
 public:
-    CameraComponent(std::string_view name, std::function<std::optional<mat4>()> boundingBox);
+    SphericalComponent();
+    virtual ~SphericalComponent() = default;
 
     virtual std::string_view getName() const override;
 
-    virtual void initializeResources(Shader& shader) override;
     virtual void process(Shader& shader, TextureUnitContainer& cont) override;
 
     virtual std::vector<Property*> getProperties() override;
 
     virtual std::vector<Segment> getSegments() override;
 
-    CameraProperty camera;
+private:
+    OptionPropertyString comp0_;
+    OptionPropertyString comp1_;
+    OptionPropertyString comp2_;
+
+    FloatMinMaxProperty rRange_;
 };
 
 }  // namespace inviwo

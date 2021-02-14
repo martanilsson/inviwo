@@ -26,32 +26,43 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *********************************************************************************/
-#pragma once
 
-#include <modules/basegl/baseglmoduledefine.h>
-#include <modules/basegl/raycasting/raycastercomponent.h>
-#include <inviwo/core/properties/cameraproperty.h>
+#include <modules/basegl/processors/raycasting/sphericalvolumeraycaster.h>
 
-#include <string_view>
-#include <functional>
-#include <optional>
+#include <inviwo/core/algorithm/boundingbox.h>
 
 namespace inviwo {
 
-class IVW_MODULE_BASEGL_API CameraComponent : public RaycasterComponent {
-public:
-    CameraComponent(std::string_view name, std::function<std::optional<mat4>()> boundingBox);
-
-    virtual std::string_view getName() const override;
-
-    virtual void initializeResources(Shader& shader) override;
-    virtual void process(Shader& shader, TextureUnitContainer& cont) override;
-
-    virtual std::vector<Property*> getProperties() override;
-
-    virtual std::vector<Segment> getSegments() override;
-
-    CameraProperty camera;
+// The Class Identifier has to be globally unique. Use a reverse DNS naming scheme
+const ProcessorInfo SphericalVolumeRaycaster::processorInfo_{
+    "org.inviwo.SphericalVolumeRaycaster",      // Class identifier
+    "Spherical Volume Raycaster",               // Display name
+    "Volume Rendering",                         // Category
+    CodeState::Experimental,                    // Code state
+    Tag::GL | Tag{"Volume"} | Tag{"Raycaster"}  // Tags
 };
+const ProcessorInfo SphericalVolumeRaycaster::getProcessorInfo() const { return processorInfo_; }
+
+SphericalVolumeRaycaster::SphericalVolumeRaycaster(std::string_view identifier,
+                                                   std::string_view displayName)
+    : VolumeRaycasterBase(identifier, displayName)
+    , volume_("volume")
+    , classify_{volume_.getName()}
+    , background_{*this}
+    , raycasting_{volume_.getName()}
+    , isoTF_{&volume_.volumePort}
+    , camera_{"camera", util::boundingBox(volume_.volumePort)}
+    , light_{&camera_.camera}
+    , positionIndicator_{}
+    , sphericalTransform_{}
+    , sampleTransform_{} {
+
+    std::array<RaycasterComponent*, 10> comps{
+        &volume_, &classify_, &background_,        &raycasting_,     &isoTF_,
+        &camera_, &light_,    &positionIndicator_, &sphericalTransform_, &sampleTransform_};
+    registerComponents(comps);
+}
+
+void SphericalVolumeRaycaster::process() { VolumeRaycasterBase::process(); }
 
 }  // namespace inviwo
