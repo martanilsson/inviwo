@@ -46,9 +46,10 @@ class WheelEvent;
  * The ImageInport is scaled depending on the ImageOutport size causing a mismatch between the event
  * canvasSize and the Image size.
  *
- * In practice, a copy of the input event is created with a canvasSize corresponding to the specified
- * size. Coordinates are not scaled because they are already provided as normalized coordinates.
- * 
+ * In practice, a copy of the input event is created with a canvasSize corresponding to the
+ * specified size. Coordinates are not scaled because they are already provided as normalized
+ * coordinates.
+ *
  * @see ImageScaling for a usage example.
  * @see ViewportManager if you want to divide the viewport instead of resizing.
  */

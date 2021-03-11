@@ -131,7 +131,7 @@ bool EventScaler::propagateGestureEvent(GestureEvent* ge, Propagator propagator)
     return true;
 }
 
-bool EventScaler::propagateTouchEvent(TouchEvent* te, Propagator propagator) { 
+bool EventScaler::propagateTouchEvent(TouchEvent* te, Propagator propagator) {
 
     auto touchPoints{te->touchPoints()};
     for (auto& p : touchPoints) {
