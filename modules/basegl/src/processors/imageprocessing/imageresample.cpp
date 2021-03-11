@@ -92,7 +92,9 @@ void ImageResample::propagateEvent(Event* event, Outport* source) {
             }
         }
         event->setUsed(used);
-        eventScaler_.setSize(inport_.getData()->getDimensions());
+        if (inport_.hasData()) {
+            eventScaler_.setSize(inport_.getData()->getDimensions());
+        }
     } else {
 
         auto propagator = [&](Event* newEvent) { inport_.propagateEvent(newEvent); };
