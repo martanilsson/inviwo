@@ -58,6 +58,7 @@ namespace inviwo {
 
 class Property;
 class ProcessorNetwork;
+class EventPropagator;
 
 class TransferFunction;
 class TransferFunctionProperty;
@@ -213,6 +214,8 @@ IVW_MODULE_QTWIDGETS_API std::vector<std::pair<std::string, QImage>> getCanvasIm
 IVW_MODULE_QTWIDGETS_API void addImageActions(QMenu& menu, const Image& image,
                                               LayerType visibleLayer = LayerType::Color,
                                               size_t visibleIndex = 10000);
+                                              
+IVW_MODULE_QTWIDGETS_API void addViewActions(QMenu& menu, EventPropagator* ep);
 
 /*
  * \brief formats a title string similar to QWidget::setWindowTitle, i.e. "[*]" is replaced with
@@ -240,6 +243,10 @@ struct IVW_MODULE_QTWIDGETS_API WidgetCloseEventFilter : QObject {
     WidgetCloseEventFilter(QObject* parent);
     virtual bool eventFilter(QObject* obj, QEvent* ev) override;
 };
+
+IVW_MODULE_QTWIDGETS_API void setFullScreen(QWidget* widget, bool fullScreen);
+IVW_MODULE_QTWIDGETS_API void setOnTop(QWidget* widget, bool onTop);
+
 
 template <typename T>
 int decimals([[maybe_unused]] double inc) {
