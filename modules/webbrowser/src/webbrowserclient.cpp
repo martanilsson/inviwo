@@ -90,15 +90,6 @@ void WebBrowserClient::setBrowserParent(CefRefPtr<CefBrowser> browser, Processor
     messageRouter_->AddHandler(bd.processorCefSynchronizer.get(), false);
 }
 
-void WebBrowserClient::removeBrowserParent(CefRefPtr<CefBrowser> browser) {
-    auto bdIt = browserParents_.find(browser->GetIdentifier());
-    if (bdIt != browserParents_.end()) {
-        messageRouter_->RemoveHandler(bdIt->second.processorCefSynchronizer.get());
-        removeLoadHandler(bdIt->second.processorCefSynchronizer);
-        browserParents_.erase(bdIt);
-    }
-}
-
 ProcessorCefSynchronizer::CallbackHandle WebBrowserClient::registerCallback(
     CefRefPtr<CefBrowser> browser, const std::string& name,
     std::function<ProcessorCefSynchronizer::CallbackFunc> callback) {
@@ -149,9 +140,14 @@ bool WebBrowserClient::DoClose(CefRefPtr<CefBrowser> browser) {
 
 void WebBrowserClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
     CEF_REQUIRE_UI_THREAD();
-    removeBrowserParent(browser);
+    auto bdIt = browserParents_.find(browser->GetIdentifier());
+    if (bdIt != browserParents_.end() && messageRouter_) {
+        messageRouter_->RemoveHandler(bdIt->second.processorCefSynchronizer.get());
+        removeLoadHandler(bdIt->second.processorCefSynchronizer);
+        browserParents_.erase(bdIt);
+    }
 
-    if (--browserCount_ == 0) {
+    if (--browserCount_ == 0 && messageRouter_) {
         // Free the router when the last browser is closed.
         messageRouter_->RemoveHandler(propertyCefSynchronizer_.get());
         removeLoadHandler(propertyCefSynchronizer_);
@@ -177,7 +173,9 @@ bool WebBrowserClient::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<C
                                       bool /*is_redirect*/) {
     CEF_REQUIRE_UI_THREAD();
 
-    messageRouter_->OnBeforeBrowse(browser, frame);
+    if (messageRouter_)
+        messageRouter_->OnBeforeBrowse(browser, frame);
+
     return false;
 }
 
